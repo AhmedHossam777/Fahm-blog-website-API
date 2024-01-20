@@ -15,13 +15,14 @@ const categoryRouter = require('./routes/category');
 app.use(express.json());
 
 
+
 //? Routes
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/comments', commentRouter);
 app.use('/api/v1/categories', categoryRouter);
 
-
+//? Error handling middleware
 
 
 const port = process.env.PORT || 3000;
