@@ -1,8 +1,10 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const generateJWT = require('../utils/generateJWT');
 
 const register = async (req, res) => {
   const user = req.body;
+  console.log(user);
   try {
     
     const email = user.email;
@@ -15,10 +17,13 @@ const register = async (req, res) => {
       });
     }
     const newUser = await User.create(user);
+    
+    const token = generateJWT(newUser._id);
 
     res.status(201).json({
       status: 'success',
       data: newUser,
+      token
     });
   } catch (error) {
     res.status(400).json({
@@ -55,20 +60,36 @@ const login = async (req, res) => {
     });
   }
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
-  });
+  const token = generateJWT(user._id);
   
   res.status(200).json({
     status: 'success',
     message: 'Login successful',
-    token
+    token,
+    user: user._id
   });
 
 };
 
 const userProfile = async (req, res) => {
-  res.send('Get me route');
+  const id = req.params.id;
+  if (!id) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Please provide user id',
+    });
+  }
+  const user = await User.findOne({ _id: id });
+  if (!user) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'User does not exist',
+    });
+  }
+  res.status(200).json({
+    status: 'success',
+    data: user,
+  });
 };
 
 const deleteUser = async (req, res) => {
