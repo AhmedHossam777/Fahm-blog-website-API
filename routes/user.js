@@ -6,6 +6,7 @@ const { register, login, userProfile, deleteUser, updateUser } = require('../con
 
 router.route('/register').post(register)
 router.route('/login').post(login)
-router.route('/:id').get(isLogin,userProfile).delete(deleteUser).put(updateUser)
+router.route('/profile').get(isLogin,userProfile)
+router.route('/:id').delete(deleteUser).put(updateUser)
 
 module.exports = router;

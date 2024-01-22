@@ -72,14 +72,8 @@ const login = async (req, res) => {
 };
 
 const userProfile = async (req, res) => {
-  const id = req.params.id;
-  if (!id) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Please provide user id',
-    });
-  }
-  const user = await User.findOne({ _id: id });
+  
+  const user = await User.findOne({ _id: req.user.id });
   if (!user) {
     return res.status(400).json({
       status: 'fail',
