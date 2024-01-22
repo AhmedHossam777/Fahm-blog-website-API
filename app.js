@@ -9,12 +9,11 @@ const userRouter = require('./routes/user');
 const postRouter = require('./routes/post');
 const commentRouter = require('./routes/comment');
 const categoryRouter = require('./routes/category');
-
+const notFound = require('./middlewares/notFound');
+const errorHandlerMiddleware = require('./middlewares/globalErrorHandler');
 
 //? Middleware
 app.use(express.json());
-
-
 
 //? Routes
 app.use('/api/v1/users', userRouter);
@@ -23,13 +22,13 @@ app.use('/api/v1/comments', commentRouter);
 app.use('/api/v1/categories', categoryRouter);
 
 //? Error handling middleware
-
+app.use(errorHandlerMiddleware);
+app.use(notFound);
 
 const port = process.env.PORT || 3000;
 
 app.listen(port, async () => {
   try {
-    
     await dbConnect(process.env.MONGO_URI);
     console.log(`Listening on port ${port}`);
   } catch (error) {
