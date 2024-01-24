@@ -2,6 +2,7 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const generateJWT = require('../utils/generateJWT');
 const AppError = require('../utils/AppError');
+const multer = require('multer');
 
 const register = async (req, res, next) => {
   const user = req.body;
@@ -68,10 +69,35 @@ const updateUser = async (req, res) => {
   res.send('Update user route');
 };
 
+const profilePhotoUpload = async (req, res, next) => {
+  const user = await User.findOne({ _id: req.user.id });
+  if (!user) {
+    return next(new AppError('User does not exist', 400));
+  }
+  if(user.isBlocked){
+    return next(new AppError('You are blocked', 403));
+  }
+  if (!req.file) {
+    return next(new AppError('Please upload a file', 400));
+  }
+
+  await User.findByIdAndUpdate(req.user.id, {
+    profilePhoto: req.file.path,
+  }, {new: true});
+
+  res.status(200).json({
+    status: 'success',
+    data: 'Photo uploaded successfully',
+    user
+  });
+}
+
+
 module.exports = {
   register,
   login,
   userProfile,
   deleteUser,
   updateUser,
+  profilePhotoUpload,
 };
