@@ -1,8 +1,6 @@
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
 const generateJWT = require('../utils/generateJWT');
 const AppError = require('../utils/AppError');
-const multer = require('multer');
 
 const register = async (req, res, next) => {
   const user = req.body;
@@ -30,7 +28,7 @@ const login = async (req, res, next) => {
   if (!email || !password)
     return next(new AppError('Please provide email and password', 400));
 
-  const user = await User.findOne({ email: email });
+  const user = await User.findOne({ email: email }).select('+password');
   if (!user) {
     return next(new AppError('User does not exist', 400));
   }
@@ -49,6 +47,8 @@ const login = async (req, res, next) => {
     user: user._id,
   });
 };
+
+
 
 const userProfile = async (req, res, next) => {
   const user = await User.findOne({ _id: req.user.id });
@@ -74,24 +74,66 @@ const profilePhotoUpload = async (req, res, next) => {
   if (!user) {
     return next(new AppError('User does not exist', 400));
   }
-  if(user.isBlocked){
+  if (user.isBlocked) {
     return next(new AppError('You are blocked', 403));
   }
   if (!req.file) {
     return next(new AppError('Please upload a file', 400));
   }
 
-  await User.findByIdAndUpdate(req.user.id, {
-    profilePhoto: req.file.path,
-  }, {new: true});
+  await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      profilePhoto: req.file.path,
+    },
+    { new: true }
+  );
 
   res.status(200).json({
     status: 'success',
     data: 'Photo uploaded successfully',
-    user
+    user,
   });
-}
+};
 
+const viewProfile = async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  const viewers = await User.findById(req.user.id);
+  if (!user || !viewers) {
+    return next(new AppError('User does not exist', 400));
+  }
+
+  const isViewed = user.viewers.find(
+    (viewer) => viewer.toString() === req.user.id
+  );
+
+  if (!isViewed) {
+    user.viewers.push(req.user.id);
+    await user.save(  );
+  }
+
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Profile viewed successfully',
+    user: [
+      user.profilePhoto,
+      user.firstName,
+      user.lastName,
+      user.posts,
+      user.followers,
+      user.following,
+    ],
+  });
+};
+
+const getAllUsers = async (req, res, next) => {
+  const users = await User.find();
+  res.status(200).json({
+    status: 'success',
+    data: users,
+  });
+};
 
 module.exports = {
   register,
@@ -100,4 +142,6 @@ module.exports = {
   deleteUser,
   updateUser,
   profilePhotoUpload,
+  viewProfile,
+  getAllUsers,
 };
