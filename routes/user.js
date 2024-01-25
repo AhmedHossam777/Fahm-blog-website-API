@@ -15,6 +15,8 @@ const {
   profilePhotoUpload,
   viewProfile,
   getAllUsers,
+  followUser,
+  unfollowUser,
 } = require('../controllers/user');
 
 router.route('/').get(isLogin, getAllUsers);
@@ -27,5 +29,6 @@ router
   .post(isLogin, upload.single('profile'), profilePhotoUpload);
 
 router.route('/view-profile/:id').get(isLogin, viewProfile);
-
+router.route('/follow-user/:id').post(isLogin, followUser);
+router.route('/unfollow-user/:id').post(isLogin, unfollowUser);
 module.exports = router;

@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, 'password is required'],
-      select : false
+      select: false,
     },
     isBlocked: {
       type: Boolean,
@@ -63,7 +63,7 @@ const userSchema = new mongoose.Schema(
         ref: 'Post',
       },
     ],
-    blocked : [
+    blocked: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -102,22 +102,12 @@ userSchema.pre('save', async function (next) {
 
 userSchema.methods.comparePassword = async function (password) {
   try {
-    
     const isMatch = await bcrypt.compare(password, this.password);
     return isMatch;
   } catch (error) {
     throw new Error(error);
   }
 };
-
-// userSchema.methods.whoViewedMyProfile = async function (id) {
-//   try {
-//     const user = await User.findById(id).populate('viewers');
-//     return user.viewers;
-//   } catch (error) {
-//     throw new Error(error);
-//   }
-// }
 
 const User = mongoose.model('User', userSchema);
 

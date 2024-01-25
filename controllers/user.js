@@ -48,8 +48,6 @@ const login = async (req, res, next) => {
   });
 };
 
-
-
 const userProfile = async (req, res, next) => {
   const user = await User.findOne({ _id: req.user.id });
   if (!user) {
@@ -59,10 +57,6 @@ const userProfile = async (req, res, next) => {
     status: 'success',
     data: user,
   });
-};
-
-const deleteUser = async (req, res) => {
-  res.send('Delete user route');
 };
 
 const updateUser = async (req, res) => {
@@ -109,9 +103,8 @@ const viewProfile = async (req, res, next) => {
 
   if (!isViewed) {
     user.viewers.push(req.user.id);
-    await user.save(  );
+    await user.save();
   }
-
 
   res.status(200).json({
     status: 'success',
@@ -127,11 +120,81 @@ const viewProfile = async (req, res, next) => {
   });
 };
 
+const followUser = async (req, res, next) => {
+  const followingUser = await User.findById(req.params.id);
+  const followerUser = await User.findById(req.user.id);
+
+  if (!followerUser || !followingUser) {
+    return next(new AppError('User does not exist', 400));
+  }
+
+  const isFollow = followingUser.followers.find(
+    (follower) => follower.toString() === req.user.id
+  );
+
+  if (isFollow) {
+    return next(new AppError('You already follow this user!', 400));
+  }
+
+  followingUser.followers.push(followerUser);
+  followerUser.following.push(followingUser);
+
+  await followerUser.save();
+  await followingUser.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'you successfully follow the user!',
+  });
+};
+
+const unfollowUser = async (req, res, next) => {
+  let unfollowedUser = await User.findById(req.params.id);
+  let user = await User.findById(req.user.id);
+
+  if (!user || !unfollowedUser) {
+    return next(new AppError('User does not exist', 400));
+  }
+
+  const isFollow = unfollowedUser.followers.find(
+    (followerId) => followerId.toString() === req.user.id
+  );
+
+  if (!isFollow) {
+    return next(new AppError('You are not following this user!', 400));
+  }
+
+  unfollowedUser.followers = unfollowedUser.followers.filter((followerId) => {
+    return followerId.toString() !== req.user.id;
+  });
+
+  user.following = user.following.filter((followingId) => {
+    return followingId.toString() !== unfollowedUser._id.toString();
+  });
+
+  await unfollowedUser.save();
+  await user.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'You have successfully unfollowed the user!',
+  });
+};
+
 const getAllUsers = async (req, res, next) => {
   const users = await User.find();
   res.status(200).json({
     status: 'success',
     data: users,
+  });
+};
+
+const deleteUser = async (req, res, next) => {
+  const users = await User.findOneAndDelete({ _id: req.params.id });
+  await users.save();
+  res.status(200).json({
+    status: 'success',
+    message: 'user deleted successfully',
   });
 };
 
@@ -144,4 +207,6 @@ module.exports = {
   profilePhotoUpload,
   viewProfile,
   getAllUsers,
+  followUser,
+  unfollowUser,
 };
