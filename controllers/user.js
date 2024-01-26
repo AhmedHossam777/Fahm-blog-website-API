@@ -250,6 +250,39 @@ const unblockUser = async (req, res, next) => {
   });
 };
 
+const suspendUser = async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  const isSuspended = user.suspend;
+  if (isSuspended) {
+    return next(new AppError('user already suspended!', 400));
+  }
+
+  user.suspend = true;
+  await user.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'user suspended successfully!',
+  });
+};
+
+const unSuspendUser = async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+  const isSuspended = user.suspend;
+  if (!isSuspended) {
+    return next(new AppError('user is not suspended!', 400));
+  }
+
+  user.suspend = false;
+  await user.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'user unSuspended successfully!',
+  });
+};
+
 const getAllUsers = async (req, res, next) => {
   const users = await User.find();
   res.status(200).json({
@@ -280,4 +313,6 @@ module.exports = {
   unfollowUser,
   blockUser,
   unblockUser,
+  suspendUser,
+  unSuspendUser
 };

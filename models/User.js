@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
       required: [true, 'password is required'],
       select: false,
     },
-    isBlocked: {
+    suspend: {
       type: Boolean,
       default: false,
     },
