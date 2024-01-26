@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const isLogin = require('../middlewares/isLogin');
+const isBlocked = require('../middlewares/isBlocked');
 const storage = require('../config/cloudinary');
 const multer = require('multer');
 
@@ -17,6 +18,8 @@ const {
   getAllUsers,
   followUser,
   unfollowUser,
+  blockUser,
+  unblockUser,
 } = require('../controllers/user');
 
 router.route('/').get(isLogin, getAllUsers);
@@ -28,7 +31,10 @@ router
   .route('/profile-photo-upload')
   .post(isLogin, upload.single('profile'), profilePhotoUpload);
 
-router.route('/view-profile/:id').get(isLogin, viewProfile);
-router.route('/follow-user/:id').post(isLogin, followUser);
+router.route('/view-profile/:id').get(isLogin, isBlocked, viewProfile);
+router.route('/follow-user/:id').post(isLogin, isBlocked, followUser);
 router.route('/unfollow-user/:id').post(isLogin, unfollowUser);
+router.route('/block-user/:id').post(isLogin, blockUser);
+router.route('/unblock-user/:id').post(isLogin, unblockUser);
+
 module.exports = router;

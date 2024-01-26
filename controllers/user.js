@@ -121,14 +121,14 @@ const viewProfile = async (req, res, next) => {
 };
 
 const followUser = async (req, res, next) => {
-  const followingUser = await User.findById(req.params.id);
-  const followerUser = await User.findById(req.user.id);
+  const followedUser = await User.findById(req.params.id);
+  const user = await User.findById(req.user.id);
 
-  if (!followerUser || !followingUser) {
+  if (!user || !followedUser) {
     return next(new AppError('User does not exist', 400));
   }
 
-  const isFollow = followingUser.followers.find(
+  const isFollow = followedUser.followers.find(
     (follower) => follower.toString() === req.user.id
   );
 
@@ -136,11 +136,11 @@ const followUser = async (req, res, next) => {
     return next(new AppError('You already follow this user!', 400));
   }
 
-  followingUser.followers.push(followerUser);
-  followerUser.following.push(followingUser);
+  followedUser.followers.push(user);
+  user.following.push(followedUser);
 
-  await followerUser.save();
-  await followingUser.save();
+  await followedUser.save();
+  await user.save();
 
   res.status(200).json({
     status: 'success',
@@ -181,6 +181,75 @@ const unfollowUser = async (req, res, next) => {
   });
 };
 
+const blockUser = async (req, res, next) => {
+  const blockedUser = await User.findById(req.params.id);
+  const user = await User.findById(req.user.id);
+
+  if (!user || !blockedUser) {
+    return next(new AppError('User does not exist', 400));
+  }
+
+  const isBlocked = user.blocked.find(
+    (userId) => userId.toString() === req.params.id
+  );
+
+  if (isBlocked) {
+    return next(new AppError('You already blocked this user', 400));
+  }
+
+  user.blocked.push(blockedUser.id);
+
+  user.followers = user.followers.filter((userId) => {
+    return userId.toString() !== blockedUser._id.toString();
+  });
+  user.following = user.following.filter((userId) => {
+    return userId.toString() !== blockedUser._id.toString();
+  });
+
+  blockedUser.following = blockedUser.following.filter((userId) => {
+    return userId.toString() !== user._id.toString();
+  });
+  blockedUser.followers = blockedUser.followers.filter((userId) => {
+    return userId.toString() !== user._id.toString();
+  });
+
+  await user.save();
+  await blockedUser.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'User blocked successfully!',
+  });
+};
+
+const unblockUser = async (req, res, next) => {
+  const blockedUser = await User.findById(req.params.id);
+  const user = await User.findById(req.user.id);
+
+  if (!user || !blockedUser) {
+    return next(new AppError('User does not exist', 400));
+  }
+
+  const isBlocked = user.blocked.find(
+    (userId) => userId.toString() === req.params.id
+  );
+
+  if (!isBlocked) {
+    return next(new AppError('you did not blocked this user', 400));
+  }
+
+  user.blocked = user.blocked.filter((userId) => {
+    return userId.toString() !== blockedUser._id.toString();
+  });
+
+  await user.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'user unblocked successfully!',
+  });
+};
+
 const getAllUsers = async (req, res, next) => {
   const users = await User.find();
   res.status(200).json({
@@ -209,4 +278,6 @@ module.exports = {
   getAllUsers,
   followUser,
   unfollowUser,
+  blockUser,
+  unblockUser,
 };
