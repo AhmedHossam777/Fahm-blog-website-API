@@ -83,9 +83,11 @@ const userSchema = new mongoose.Schema(
   {
     timestamps: true,
     validateBeforeSave: true,
+    toJSON: { virtuals: true },
   }
 );
 
+// middlewares
 userSchema.pre('save', async function (next) {
   try {
     if (!this.isModified('password')) return next();
@@ -100,6 +102,33 @@ userSchema.pre('save', async function (next) {
   }
 });
 
+// virtual properties
+userSchema.virtual('fullname').get(function () {
+  return this.firstName + ' ' + this.lastName;
+});
+
+userSchema.virtual('followers count').get(function () {
+  return this.followers.length;
+});
+
+userSchema.virtual('following count').get(function () {
+  return this.following.length;
+});
+
+userSchema.virtual('profile views').get(function () {
+  return this.viewers.length;
+});
+
+userSchema.virtual('user blocked count').get(function () {
+  return this.blocked.length;
+});
+
+userSchema.virtual('post count').get(function () {
+  return this.posts.length;
+});
+
+
+// schema methods
 userSchema.methods.comparePassword = async function (password) {
   try {
     const isMatch = await bcrypt.compare(password, this.password);
