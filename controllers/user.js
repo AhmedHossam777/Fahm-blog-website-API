@@ -49,7 +49,9 @@ const login = async (req, res, next) => {
 };
 
 const userProfile = async (req, res, next) => {
-  const user = await User.findOne({ _id: req.user.id });
+  const user = await User.findOne({ _id: req.user.id }).populate({
+    path: 'posts', // populate posts field in user model with posts data
+  }); 
   if (!user) {
     return next(new AppError('User does not exist', 400));
   }
@@ -314,5 +316,5 @@ module.exports = {
   blockUser,
   unblockUser,
   suspendUser,
-  unSuspendUser
+  unSuspendUser,
 };

@@ -31,13 +31,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isAdmin: {
-      type: Boolean,
-      default: false,
-    },
     role: {
       type: String,
-      enum: ['Admin', 'Guest', 'Editor'],
+      enum: ['Admin', 'User', 'Editor'],
+      default: 'User',
     },
     viewers: [
       {
@@ -102,6 +99,7 @@ userSchema.pre('save', async function (next) {
   }
 });
 
+
 // virtual properties
 userSchema.virtual('fullname').get(function () {
   return this.firstName + ' ' + this.lastName;
@@ -126,7 +124,6 @@ userSchema.virtual('user blocked count').get(function () {
 userSchema.virtual('post count').get(function () {
   return this.posts.length;
 });
-
 
 // schema methods
 userSchema.methods.comparePassword = async function (password) {

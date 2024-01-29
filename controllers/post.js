@@ -1,8 +1,13 @@
 const Post = require('../models/Post');
 const User = require('../models/User');
+const AppError = require('../utils/AppError');
 
 const getPosts = async (req, res) => {
-  res.send('Get all posts');
+  const posts = await Post.find();
+  res.status(200).json({
+    status: 'success',
+    posts
+  })
 };
 
 const getPost = async (req, res) => {

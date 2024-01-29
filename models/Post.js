@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User = require('./User');
 
 const postSchema = new mongoose.Schema(
   {
@@ -45,7 +46,6 @@ const postSchema = new mongoose.Schema(
     photo: {
       type: String,
     },
-    
   },
   {
     timestamps: true,
@@ -53,6 +53,31 @@ const postSchema = new mongoose.Schema(
   }
 );
 
+postSchema.pre('save', async function (next) {
+  const user = await User.findById(this.user);
+
+  if (user.posts.length >= 10) {
+    await User.findByIdAndUpdate(
+      this.user,
+      {
+        userAward: 'gold',
+      },
+      { new: true }
+    );
+  } else if (user.posts .length>= 5) {
+    await User.findByIdAndUpdate(
+      this.user,
+      {
+        userAward: 'silver',
+      },
+      { new: true }
+    );
+  }
+
+  await user.save();
+
+  next();
+});
 const Post = mongoose.model('Post', postSchema);
 
 module.exports = Post;
