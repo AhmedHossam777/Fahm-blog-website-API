@@ -51,9 +51,61 @@ const getCategory = async (req, res, next) => {
   });
 };
 
+const updateCategory = async (req, res, next) => {
+  const { title } = req.body;
+  if (!title) {
+    next(new AppError('please provide a title to update this category!', 400));
+  }
+
+  const category = await Category.findOne({
+    user: req.user.id,
+    _id: req.params.id,
+  });
+
+  if (!category) {
+    return next(
+      new AppError(
+        'there is no categories with the provided id for this user',
+        400
+      )
+    );
+  }
+
+  await category.updateOne({ title: title }, { new: true });
+  await category.save();
+
+  res.status(200).json({
+    status: 'success',
+    category,
+  });
+};
+
+const deleteCategory = async (req, res, next) => {
+  const category = await Category.findOne({
+    user: req.user.id,
+    _id: req.params.id,
+  });
+
+  if (!category) {
+    return next(
+      new AppError(
+        'there is no categories with the provided id for this user',
+        400
+      )
+    );
+  }
+
+  await category.deleteOne();
+  res.status(204).json({
+    status: 'success',
+    message: 'category deleted successfully',
+  });
+};
 
 module.exports = {
   createCategory,
   getCategories,
   getCategory,
+  updateCategory,
+  deleteCategory
 };
