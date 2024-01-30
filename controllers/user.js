@@ -51,7 +51,7 @@ const login = async (req, res, next) => {
 const userProfile = async (req, res, next) => {
   const user = await User.findOne({ _id: req.user.id }).populate({
     path: 'posts', // populate posts field in user model with posts data
-  }); 
+  });
   if (!user) {
     return next(new AppError('User does not exist', 400));
   }
@@ -59,10 +59,6 @@ const userProfile = async (req, res, next) => {
     status: 'success',
     data: user,
   });
-};
-
-const updateUser = async (req, res) => {
-  res.send('Update user route');
 };
 
 const profilePhotoUpload = async (req, res, next) => {
@@ -285,6 +281,48 @@ const unSuspendUser = async (req, res, next) => {
   });
 };
 
+const updateUser = async (req, res, next) => {
+  const { email, password } = req.body;
+  if (password) {
+    return next(new AppError('cannot update password in this route', 400));
+  }
+
+  const dupEmail = await User.findOne({ email: email });
+  if (dupEmail) {
+    return next(new AppError('there is a user with this email', 400));
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(req.user.id, req.body, {
+    new: true,
+  });
+  await updatedUser.save();
+
+  res.status(203).json({
+    status: 'success',
+    updatedUser,
+  });
+};
+
+const updateUserPassword = async (req, res, next) => {
+  const password = req.body.password;
+  const newPassword = req.body.newPassword;
+
+  const user = await User.findById(req.user.id).select('+password');
+
+  const isCorrectPass = user.comparePassword(password);
+  if (!isCorrectPass) {
+    return next(new AppError('wrong password!', 400));
+  }
+
+  user.password = newPassword;
+
+  await user.save();
+  res.status(203).json({
+    status: 'success',
+    message: 'password updated successfully',
+  });
+};
+
 const getAllUsers = async (req, res, next) => {
   const users = await User.find();
   res.status(200).json({
@@ -307,7 +345,6 @@ module.exports = {
   login,
   userProfile,
   deleteUser,
-  updateUser,
   profilePhotoUpload,
   viewProfile,
   getAllUsers,
@@ -317,4 +354,6 @@ module.exports = {
   unblockUser,
   suspendUser,
   unSuspendUser,
+  updateUser,
+  updateUserPassword,
 };
