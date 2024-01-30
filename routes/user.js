@@ -24,14 +24,13 @@ const {
   unblockUser,
   suspendUser,
   unSuspendUser,
-  updateUserPassword
+  updateUserPassword,
 } = require('../controllers/user');
 
 router.route('/').get(isLogin, getAllUsers);
 router.route('/register').post(register);
 router.route('/login').post(login);
 router.route('/profile').get(isLogin, isSuspended, userProfile);
-router.route('/:id').delete(deleteUser)
 
 router
   .route('/profile-photo-upload')
@@ -50,7 +49,10 @@ router.route('/block-user/:id').post(isLogin, isSuspended, blockUser);
 router.route('/unblock-user/:id').post(isLogin, isSuspended, unblockUser);
 router.route('/suspend-user/:id').post(isLogin, isAdmin, suspendUser);
 router.route('/unsuspend-user/:id').post(isLogin, isAdmin, unSuspendUser);
-router.route('/update-me').patch(isLogin, isSuspended, updateUser)
-router.route('/update-password').patch(isLogin, isSuspended, updateUserPassword)
+router.route('/update-me').patch(isLogin, isSuspended, updateUser);
+router
+  .route('/update-password')
+  .patch(isLogin, isSuspended, updateUserPassword);
+router.route('/delete-me').delete(isLogin, deleteUser);
 
 module.exports = router;

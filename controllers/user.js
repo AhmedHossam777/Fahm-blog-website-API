@@ -1,6 +1,9 @@
 const User = require('../models/User');
 const generateJWT = require('../utils/generateJWT');
 const AppError = require('../utils/AppError');
+const Post = require('./../models/Post');
+const Comment = require('../models/Comment')
+const Category = require('../models/Category')
 
 const register = async (req, res, next) => {
   const user = req.body;
@@ -332,9 +335,12 @@ const getAllUsers = async (req, res, next) => {
 };
 
 const deleteUser = async (req, res, next) => {
-  const users = await User.findOneAndDelete({ _id: req.params.id });
-  await users.save();
-  res.status(200).json({
+  await User.findOneAndDelete({ _id: req.user.id });
+  await Post.deleteMany({user: req.user.id})
+  await Comment.deleteMany({user: req.user.id})
+  await Category.deleteMany({user: req.user.id})
+
+  res.status(204).json({
     status: 'success',
     message: 'user deleted successfully',
   });
