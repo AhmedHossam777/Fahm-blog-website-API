@@ -1,17 +1,59 @@
-const createCategory = async(req,res) => {
-  res.send('create category');
-}
+const Category = require('../models/Category');
+const AppError = require('../utils/AppError');
 
-const getCategories = async(req,res) => {
-  res.send('get categories');
-}
+const createCategory = async (req, res, next) => {
+  const { title } = req.body;
+  if (!title) {
+    return next(new AppError('please provide a title', 400));
+  }
 
-const getCategory = async(req,res) => {
-  res.send('get category');
-}
+  const isDup = await Category.findOne({ title: title });
+
+  if (isDup) {
+    return next(new AppError('category is already exist', 400));
+  }
+
+  const category = await Category.create({ title: title, user: req.user.id });
+
+  res.status(201).json({
+    status: 'success',
+    category,
+  });
+};
+
+const getCategories = async (req, res, next) => {
+  const categories = await Category.find({ user: req.user.id });
+
+  res.status(200).json({
+    status: 'success',
+    categories,
+  });
+};
+
+const getCategory = async (req, res, next) => {
+  const category = await Category.findOne({
+    user: req.user.id,
+    _id: req.params.id,
+  });
+
+  if (!category) {
+    return next(
+      new AppError(
+        'there is no categories with the provided id for this user',
+        400
+      )
+    );
+  }
+
+  res.status(200).json({
+    status: 'success',
+    category,
+  });
+};
+
 
 module.exports = {
   createCategory,
   getCategories,
-  getCategory
-}
+  getCategory,
+};
