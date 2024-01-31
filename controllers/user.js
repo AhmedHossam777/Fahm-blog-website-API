@@ -92,7 +92,12 @@ const profilePhotoUpload = async (req, res, next) => {
 };
 
 const viewProfile = async (req, res, next) => {
-  const user = await User.findById(req.params.id);
+  const userId = req.params.id;
+  if (!userId) {
+    return next(new AppError('please provide the id in the url', 400));
+  }
+
+  const user = await User.findById(userId);
   const viewers = await User.findById(req.user.id);
   if (!user || !viewers) {
     return next(new AppError('User does not exist', 400));

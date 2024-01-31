@@ -2,14 +2,23 @@ const express = require('express');
 const isLogin = require('../middlewares/isLogin');
 const isSuspended = require('../middlewares/isSuspended');
 
-const { createPost, getPosts, getPost } = require('../controllers/post');
+const {
+  createPost,
+  getPostsOfFollowedUsers,
+  getPost,
+  getFeed,
+} = require('../controllers/post');
 
 const router = express.Router();
 
 router
   .route('/')
-  .get(isLogin, isSuspended, getPosts)
+  .get(isLogin, isSuspended, getFeed)
   .post(isLogin, isSuspended, createPost);
+
+router
+  .route('/posts-of-following-user')
+  .get(isLogin, isSuspended, getPostsOfFollowedUsers);
 
 router.route('/:id').get(isLogin, isSuspended, getPost);
 

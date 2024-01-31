@@ -3,7 +3,7 @@ const User = require('../models/User');
 const Category = require('../models/Category');
 const AppError = require('../utils/AppError');
 
-const getPosts = async (req, res) => {
+const getFeed = async (req, res, next) => {
   const posts = await Post.find();
   res.status(200).json({
     status: 'success',
@@ -11,8 +11,44 @@ const getPosts = async (req, res) => {
   });
 };
 
-const getPost = async (req, res) => {
-  res.send('Get post');
+const getPostsOfFollowedUsers = async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  const following = user.following;
+  if (following.length === 0) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'you still did not follow anyone',
+    });
+  }
+
+  let posts = [];
+  for (const userId of following) {
+    posts = await Post.find({ user: userId });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    posts,
+  });
+};
+
+const getPost = async (req, res, next) => {
+  const postId = req.params.id;
+  if (!postId) {
+    return next(new AppError('please provide the id in the url', 400));
+  }
+
+  const post = await Post.findById(postId);
+
+  if(!post){
+    return next(new AppError('there is no post with that id', 400));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    post
+  })
+
 };
 
 const createPost = async (req, res, next) => {
@@ -52,7 +88,8 @@ const createPost = async (req, res, next) => {
 };
 
 module.exports = {
-  getPosts,
   getPost,
   createPost,
+  getFeed,
+  getPostsOfFollowedUsers,
 };
