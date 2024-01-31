@@ -32,7 +32,6 @@ const getCategories = async (req, res, next) => {
 
 const getCategory = async (req, res, next) => {
   const category = await Category.findOne({
-    user: req.user.id,
     _id: req.params.id,
   });
 

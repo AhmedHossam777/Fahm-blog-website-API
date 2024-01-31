@@ -14,9 +14,9 @@ const postSchema = new mongoose.Schema(
       trim: true,
     },
     category: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String,
       ref: 'Category',
-      // required: [true, 'post category is required'],
+      required: [true, 'post category is required'],
     },
     views: [
       {

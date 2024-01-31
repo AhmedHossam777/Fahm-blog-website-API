@@ -2,8 +2,8 @@ const User = require('../models/User');
 const generateJWT = require('../utils/generateJWT');
 const AppError = require('../utils/AppError');
 const Post = require('./../models/Post');
-const Comment = require('../models/Comment')
-const Category = require('../models/Category')
+const Comment = require('../models/Comment');
+const Category = require('../models/Category');
 
 const register = async (req, res, next) => {
   const user = req.body;
@@ -110,14 +110,14 @@ const viewProfile = async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     message: 'Profile viewed successfully',
-    user: [
-      user.profilePhoto,
-      user.firstName,
-      user.lastName,
-      user.posts,
-      user.followers,
-      user.following,
-    ],
+    user: {
+      profilePhoto: user.profilePhoto,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      posts: user.posts,
+      followers: user.followers,
+      following: user.following,
+    },
   });
 };
 
@@ -336,9 +336,9 @@ const getAllUsers = async (req, res, next) => {
 
 const deleteUser = async (req, res, next) => {
   await User.findOneAndDelete({ _id: req.user.id });
-  await Post.deleteMany({user: req.user.id})
-  await Comment.deleteMany({user: req.user.id})
-  await Category.deleteMany({user: req.user.id})
+  await Post.deleteMany({ user: req.user.id });
+  await Comment.deleteMany({ user: req.user.id });
+  await Category.deleteMany({ user: req.user.id });
 
   res.status(204).json({
     status: 'success',

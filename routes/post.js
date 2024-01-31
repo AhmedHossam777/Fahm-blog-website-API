@@ -6,7 +6,11 @@ const { createPost, getPosts, getPost } = require('../controllers/post');
 
 const router = express.Router();
 
-router.route('/').get(isLogin, getPosts).post(isLogin, isSuspended, createPost);
-router.route('/:id').get(isLogin, getPost);
+router
+  .route('/')
+  .get(isLogin, isSuspended, getPosts)
+  .post(isLogin, isSuspended, createPost);
+
+router.route('/:id').get(isLogin, isSuspended, getPost);
 
 module.exports = router;
