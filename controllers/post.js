@@ -108,10 +108,37 @@ const likePost = async (req, res, next) => {
   });
 };
 
+
+const disLikePost = async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  const post = await Post.findById(req.params.id);
+
+  if (!post) {
+    return next('there is no post with that id', 404);
+  }
+
+  const disLikedUsersId = post.dislikes;
+  if (disLikedUsersId.includes(user._id)) {
+    return next(new AppError('you already disliked this post', 400));
+  }
+
+  post.dislikes.push(user._id);
+  await post.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'you disliked this post',
+  });
+};
+
+
+
+
 module.exports = {
   getPost,
   createPost,
   getFeed,
   getPostsOfFollowedUsers,
   likePost,
+  disLikePost
 };

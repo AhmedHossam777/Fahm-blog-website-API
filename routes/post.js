@@ -10,6 +10,7 @@ const {
   getPost,
   getFeed,
   likePost,
+  disLikePost
 } = require('../controllers/post');
 
 const router = express.Router();
@@ -26,5 +27,6 @@ router
 router.route('/:id').get(isLogin, isSuspended, hidePosts, getPost);
 
 router.route('/like-post/:id').post(isLogin, isSuspended, hidePosts, likePost);
+router.route('/dislike-post/:id').post(isLogin, isSuspended, hidePosts, disLikePost);
 
 module.exports = router;
