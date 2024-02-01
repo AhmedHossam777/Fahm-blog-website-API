@@ -1,6 +1,8 @@
 const express = require('express');
 const isLogin = require('../middlewares/isLogin');
 const isSuspended = require('../middlewares/isSuspended');
+const isBlocked = require('../middlewares/isBlocked')
+const hidePosts = require('../middlewares/hidePosts');
 
 const {
   createPost,
@@ -20,6 +22,6 @@ router
   .route('/posts-of-following-user')
   .get(isLogin, isSuspended, getPostsOfFollowedUsers);
 
-router.route('/:id').get(isLogin, isSuspended, getPost);
+router.route('/:id').get(isLogin, isSuspended,hidePosts, getPost);
 
 module.exports = router;

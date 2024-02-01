@@ -10,7 +10,7 @@ const isBlocked = async (req, res, next) => {
   );
 
   if (youBlock) {
-    return next(new AppError('you blocked this user!', 400));
+    return res.send('you blocked this user')
   }
 
   const youAreBlocked = wantedUser.blocked.find(
@@ -18,7 +18,7 @@ const isBlocked = async (req, res, next) => {
   );
 
   if (youAreBlocked) {
-    return next(new AppError('you are blocked from this user!', 400));
+    return res.send('you are blocked')
   }
 
   next();
