@@ -33,6 +33,7 @@ const getPostsOfFollowedUsers = async (req, res, next) => {
 };
 
 const getPost = async (req, res, next) => {
+  const user = await User.findById(req.user.id);
   const postId = req.params.id;
   if (!postId) {
     return next(new AppError('please provide the id in the url', 400));
@@ -42,6 +43,10 @@ const getPost = async (req, res, next) => {
 
   if (!post) {
     return next(new AppError('there is no post with that id', 400));
+  }
+
+  if (!post.views.includes(user._id)) {
+    post.views.push(user._id);
   }
 
   res.status(200).json({
@@ -108,7 +113,6 @@ const likePost = async (req, res, next) => {
   });
 };
 
-
 const disLikePost = async (req, res, next) => {
   const user = await User.findById(req.user.id);
   const post = await Post.findById(req.params.id);
@@ -131,8 +135,52 @@ const disLikePost = async (req, res, next) => {
   });
 };
 
+const deletePost = async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  const post = await Post.findById(req.params.id);
 
+  if (!post) {
+    return next('there is no post with that id', 404);
+  }
 
+  if (post.user.toString() != user._id.toString()) {
+    return next(
+      new AppError('you are not authorized to delete this post', 403)
+    );
+  }
+
+  await Post.findByIdAndDelete(post._id);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'post deleted successfully',
+  });
+};
+
+const updatePost = async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  const post = await Post.findById(req.params.id);
+
+  if (!post) {
+    return next('there is no post with that id', 404);
+  }
+
+  if (post.user.toString() != user._id.toString()) {
+    return next(
+      new AppError('you are not authorized to update this post', 403)
+    );
+  }
+
+  const updatedPost = await Post.findByIdAndUpdate(post._id, req.body, {
+    new: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'post updated successfully',
+    updatedPost,
+  });
+};
 
 module.exports = {
   getPost,
@@ -140,5 +188,7 @@ module.exports = {
   getFeed,
   getPostsOfFollowedUsers,
   likePost,
-  disLikePost
+  disLikePost,
+  deletePost,
+  updatePost,
 };

@@ -7,7 +7,7 @@ const createCategory = async (req, res, next) => {
     return next(new AppError('please provide a title', 400));
   }
 
-  const isDup = await Category.findOne({ title: title });
+  const isDup = await Category.findOne({ title: title, user: req.user.id});
 
   if (isDup) {
     return next(new AppError('category is already exist', 400));

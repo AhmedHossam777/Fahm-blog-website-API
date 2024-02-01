@@ -50,6 +50,7 @@ const postSchema = new mongoose.Schema(
   {
     timestamps: true,
     validateBeforeSave: true,
+    toJSON: { virtuals: true },
   }
 );
 
@@ -70,7 +71,7 @@ postSchema.pre('save', async function (next) {
       {
         userAward: 'Silver',
       },
-      { new: true }
+      { new: true , runValidators: true , virtuals: true}
     );
   }
 
@@ -79,8 +80,20 @@ postSchema.pre('save', async function (next) {
   next();
 });
 
+postSchema.pre(/^find/, function (next) {
+  postSchema.virtual('views count').get(function () {
+    return this.views.length;
+  });
+
+  next();
+});
+
 postSchema.virtual('likes count').get(function () {
   return this.likes.length;
+});
+
+postSchema.virtual('dislikes count').get(function () {
+  return this.dislikes.length;
 });
 
 const Post = mongoose.model('Post', postSchema);
