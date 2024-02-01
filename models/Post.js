@@ -60,15 +60,15 @@ postSchema.pre('save', async function (next) {
     await User.findByIdAndUpdate(
       this.user,
       {
-        userAward: 'gold',
+        userAward: 'Gold',
       },
       { new: true }
     );
-  } else if (user.posts .length>= 5) {
+  } else if (user.posts.length >= 5) {
     await User.findByIdAndUpdate(
       this.user,
       {
-        userAward: 'silver',
+        userAward: 'Silver',
       },
       { new: true }
     );
@@ -78,6 +78,11 @@ postSchema.pre('save', async function (next) {
 
   next();
 });
+
+postSchema.virtual('likes count').get(function () {
+  return this.likes.length;
+});
+
 const Post = mongoose.model('Post', postSchema);
 
 module.exports = Post;

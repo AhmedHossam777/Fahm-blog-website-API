@@ -2,16 +2,17 @@ const User = require('../models/User');
 const Post = require('../models/Post');
 
 const hidePosts = async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-  const blockedUsersId = user.blocked;
-  let posts = [];
+  const post = await Post.findById(req.params.id);
 
-  for (const userId of blockedUsersId) {
-    posts = await Post.find({ user: userId });
-  }
+  const userId = post.user;
+  const postOwner = await User.findById(userId);
+  const blockedUsers = postOwner.blocked;
 
-  if (posts) {
-    res.send('you are blocked')
+  if (blockedUsers.includes(req.user.id)) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'you are blocked by the user',
+    });
   }
 
   next();

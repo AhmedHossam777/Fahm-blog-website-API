@@ -40,15 +40,14 @@ const getPost = async (req, res, next) => {
 
   const post = await Post.findById(postId);
 
-  if(!post){
+  if (!post) {
     return next(new AppError('there is no post with that id', 400));
   }
 
   res.status(200).json({
     status: 'success',
-    post
-  })
-
+    post,
+  });
 };
 
 const createPost = async (req, res, next) => {
@@ -87,9 +86,32 @@ const createPost = async (req, res, next) => {
   });
 };
 
+const likePost = async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  const post = await Post.findById(req.params.id);
+
+  if (!post) {
+    return next('there is no post with that id', 404);
+  }
+
+  const likedUsersId = post.likes;
+  if (likedUsersId.includes(user._id)) {
+    return next(new AppError('you already liked this post', 400));
+  }
+
+  post.likes.push(user._id);
+  await post.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'you liked this post',
+  });
+};
+
 module.exports = {
   getPost,
   createPost,
   getFeed,
   getPostsOfFollowedUsers,
+  likePost,
 };
