@@ -36,6 +36,13 @@ const postSchema = new mongoose.Schema(
         ref: 'User',
       },
     ],
+    comments: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment',
+      }
+    ]
+    ,
     user: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -94,6 +101,9 @@ postSchema.virtual('likes count').get(function () {
 
 postSchema.virtual('dislikes count').get(function () {
   return this.dislikes.length;
+});
+postSchema.virtual('comments count').get(function () {
+  return this.comments.length;
 });
 
 const Post = mongoose.model('Post', postSchema);

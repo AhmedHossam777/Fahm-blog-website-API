@@ -27,8 +27,13 @@ const commentSchema = new mongoose.Schema(
   {
     timestamps: true,
     validateBeforeSave: true,
+    toJSON: { virtuals: true },
   }
 );
+
+commentSchema.virtual('likesCount').get(function () {
+  return this.likes.length;
+});
 
 const Comment = mongoose.model('Comment', commentSchema);
 
