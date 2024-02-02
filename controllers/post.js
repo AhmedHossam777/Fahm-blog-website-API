@@ -5,6 +5,12 @@ const AppError = require('../utils/AppError');
 
 const getFeed = async (req, res, next) => {
   const posts = await Post.find();
+  if (posts.length === 0) {
+    return res.status(200).json({
+      status: 'success',
+      message: 'there is no posts yet',
+    });
+  }
   res.status(200).json({
     status: 'success',
     posts,
@@ -56,6 +62,7 @@ const getPost = async (req, res, next) => {
 };
 
 const createPost = async (req, res, next) => {
+  console.log(req.file);
   const { title, description, category } = req.body;
 
   const user = await User.findById(req.user.id);
@@ -78,6 +85,7 @@ const createPost = async (req, res, next) => {
     description,
     user: user._id,
     category: userCategory.title,
+    photo: req.file.path, // path of the uploaded image
   });
 
   userCategory.posts.push(post._id);

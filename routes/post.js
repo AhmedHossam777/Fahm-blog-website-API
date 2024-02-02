@@ -3,6 +3,8 @@ const isLogin = require('../middlewares/isLogin');
 const isSuspended = require('../middlewares/isSuspended');
 const isBlocked = require('../middlewares/isBlocked');
 const hidePosts = require('../middlewares/hidePosts');
+const storage = require('../config/cloudinary');
+const multer = require('multer');
 
 const {
   createPost,
@@ -17,10 +19,13 @@ const {
 
 const router = express.Router();
 
+// multer configuration
+const upload = multer({ storage });
+
 router
   .route('/')
   .get(isLogin, isSuspended, getFeed)
-  .post(isLogin, isSuspended, createPost);
+  .post(isLogin, isSuspended, upload.single('image'), createPost); // upload.single('image')
 
 router
   .route('/posts-of-following-user')
