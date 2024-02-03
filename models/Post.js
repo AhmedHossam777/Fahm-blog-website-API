@@ -16,7 +16,6 @@ const postSchema = new mongoose.Schema(
     category: {
       type: String,
       ref: 'Category',
-      required: [true, 'post category is required'],
     },
     views: [
       {
@@ -40,9 +39,8 @@ const postSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Comment',
-      }
-    ]
-    ,
+      },
+    ],
     user: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -78,7 +76,7 @@ postSchema.pre('save', async function (next) {
       {
         userAward: 'Silver',
       },
-      { new: true , runValidators: true , virtuals: true}
+      { new: true, runValidators: true, virtuals: true }
     );
   }
 

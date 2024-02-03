@@ -7,7 +7,6 @@ const signToken = (id) => {
 };
 
 const generateJWT = async (user, res) => {
-  try {
     const token = await signToken(user._id);
 
     const cookieOption = {
@@ -25,20 +24,7 @@ const generateJWT = async (user, res) => {
 
     user.password = undefined;
 
-    res.status(201).json({
-      status: 'success',
-      token: token,
-      data: {
-        user,
-      },
-    });
-  } catch (error) {
-    console.error('Error generating JWT:', error);
-    res.status(500).json({
-      status: 'error',
-      message: 'An error occurred while generating the JWT token.',
-    });
-  }
+    return token;
 };
 
 module.exports = generateJWT;
