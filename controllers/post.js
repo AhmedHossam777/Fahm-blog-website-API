@@ -90,8 +90,8 @@ const createPost = async (req, res, next) => {
 
   userCategory.posts.push(post._id);
   user.posts.push(post._id);
-  await user.save();
-  await userCategory.save();
+
+  await Promise.all([userCategory.save(), user.save()]);
 
   res.status(201).json({
     status: 'success',

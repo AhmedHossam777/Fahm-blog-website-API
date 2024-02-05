@@ -146,8 +146,7 @@ const followUser = async (req, res, next) => {
   followedUser.followers.push(user);
   user.following.push(followedUser);
 
-  await followedUser.save();
-  await user.save();
+  await Promise.all([followedUser.save(), user.save()]);
 
   res.status(200).json({
     status: 'success',
@@ -179,8 +178,7 @@ const unfollowUser = async (req, res, next) => {
     return followingId.toString() !== unfollowedUser._id.toString();
   });
 
-  await unfollowedUser.save();
-  await user.save();
+  await Promise.all([unfollowedUser.save(), user.save()]);
 
   res.status(200).json({
     status: 'success',
@@ -220,8 +218,7 @@ const blockUser = async (req, res, next) => {
     return userId.toString() !== user._id.toString();
   });
 
-  await user.save();
-  await blockedUser.save();
+  await Promise.all([user.save(), blockedUser.save()]);
 
   res.status(200).json({
     status: 'success',
