@@ -12,7 +12,7 @@
 - Comment CRUD operations
 - Category CRUD operations
 - like and dislike a comment
-- Admin can suspend a user
+- Admin can suspend and unsuspend a user
 - A user can block different users
 - A user who block another user cannot see his/her posts
 - blocked user cannot see the profile of the user who blocked him/her
@@ -29,10 +29,10 @@
 - Get posts created count
 - Get blocked counts
 - Get all users who views someone's profile
-- Admin can unsuspend a suspended user
 - Update password
 - Profile photo uploaded
-- A user can close his/her account
+- Upload images with posts
+- A user can delete his/her account
 
 # ENDPOINTS
 
