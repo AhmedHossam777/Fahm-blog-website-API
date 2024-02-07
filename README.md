@@ -1,8 +1,25 @@
 # **Blog API Application Project**
 
-## Tech Stack
+## Technologies
 
-**Server:** Node, Express, MongoDB, Mongoose, JWT
+- bcrypt
+- cloudinary
+- cors
+- dotenv
+- express
+- express-async-errors
+- express-mongo-sanitize
+- express-rate-limit
+- helmet
+- hpp
+- http-status-codes
+- jsonwebtoken
+- mongoose
+- multer
+- multer-storage-cloudinary
+- nodemon
+- validator
+- xss-clean
 
 # API FEATURES
 
@@ -37,7 +54,7 @@
 # ENDPOINTS
 
 - [**Blog API Application Project**](#blog-api-application-project)
-  - [Tech Stack](#tech-stack)
+  - [Technologies](#technologies)
 - [API FEATURES](#api-features)
 - [ENDPOINTS](#endpoints)
   - [Run Locally](#run-locally)
@@ -59,7 +76,7 @@
   - [**Admin unsuspend a user**](#admin-unsuspend-a-user)
   - [**Delete your account**](#delete-your-account)
   - [**Upload Profile Photo**](#upload-profile-photo)
-  - [**Posts API Refeference**](#posts-api-refeference)
+- [**Posts API Reference**](#posts-api-reference)
   - [**Create Post**](#create-post)
   - [**Get the feed**](#get-the-feed)
   - [**Get posts of followings**](#get-posts-of-followings)
@@ -311,7 +328,7 @@ PATCH /api/v1/users/unsuspend-user/:id
 | `authentication` | `string` | Your token      | yes      |
 | `profilePhoto`   | `string` | Image to upload | yes      |
 
-## **Posts API Refeference**
+# **Posts API Reference**
 
 ## **Create Post**
 
