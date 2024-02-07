@@ -12,7 +12,7 @@
 - Comment CRUD operations
 - Category CRUD operations
 - like and dislike a comment
-- Admin can suspend and unsuspend a user
+- Admin can suspend a user
 - A user can block different users
 - A user who block another user cannot see his/her posts
 - blocked user cannot see the profile of the user who blocked him/her
@@ -63,6 +63,7 @@
   - [**Create Post**](#create-post)
   - [**Get the feed**](#get-the-feed)
   - [**Get posts of followings**](#get-posts-of-followings)
+  - [**Get Single Post**](#get-single-post)
   - [**Like Post**](#like-post)
   - [**Dislike Post**](#dislike-post)
   - [**Update Post**](#update-post)
@@ -351,6 +352,8 @@ Example request body:
 
 ```http
   GET /api/v1/posts/posts-of-following-user
+```
+
 | Parameter        | Type     | Description | Required |
 | :--------------- | :------- | :---------- | :------- |
 | `authentication` | `string` | Your token  | yes       |
