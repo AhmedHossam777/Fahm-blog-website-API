@@ -12,7 +12,7 @@
 - Comment CRUD operations
 - Category CRUD operations
 - like and dislike a comment
-- Admin can suspend a user
+- Admin can suspend and unsuspend a user
 - A user can block different users
 - A user who block another user cannot see his/her posts
 - blocked user cannot see the profile of the user who blocked him/her
@@ -55,11 +55,11 @@
   - [**Update your profile**](#update-your-profile)
   - [**Block another user**](#block-another-user)
   - [**Unblock user**](#unblock-user)
-  - [**Admin blocking a user**](#admin-blocking-a-user)
-  - [**Admin unblocking a user**](#admin-unblocking-a-user)
+  - [**Admin suspend a user**](#admin-suspend-a-user)
+  - [**Admin unsuspend a user**](#admin-unsuspend-a-user)
   - [**Delete your account**](#delete-your-account)
   - [**Upload Profile Photo**](#upload-profile-photo)
-- [**Posts API Refeference**](#posts-api-refeference)
+  - [**Posts API Refeference**](#posts-api-refeference)
   - [**Create Post**](#create-post)
   - [**Get the feed**](#get-the-feed)
   - [**Get posts of followings**](#get-posts-of-followings)
@@ -268,7 +268,7 @@ PATCH /api/v1/users/unblock-user/:id
 | `authentication` | `string` | Your token                         | yes      |
 | `id`             | `string` | Id of the user you want to unblock | yes      |
 
-## **Admin blocking a user**
+## **Admin suspend a user**
 
 ```http
 PATCH /api/v1/users/suspend-user/:id
@@ -279,7 +279,7 @@ PATCH /api/v1/users/suspend-user/:id
 | `authentication` | `string` | Your token                       | yes      |
 | `id`             | `string` | Id of the user you want to block | yes      |
 
-## **Admin unblocking a user**
+## **Admin unsuspend a user**
 
 ```http
 PATCH /api/v1/users/unsuspend-user/:id
@@ -311,7 +311,7 @@ PATCH /api/v1/users/unsuspend-user/:id
 | `authentication` | `string` | Your token      | yes      |
 | `profilePhoto`   | `string` | Image to upload | yes      |
 
-# **Posts API Refeference**
+## **Posts API Refeference**
 
 ## **Create Post**
 
@@ -357,7 +357,6 @@ Example request body:
 | Parameter        | Type     | Description | Required |
 | :--------------- | :------- | :---------- | :------- |
 | `authentication` | `string` | Your token  | yes       |
-
 
 ## **Get Single Post**
 
