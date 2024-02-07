@@ -17,7 +17,6 @@ const helmet = require('helmet');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 
-
 //? Middleware
 // Allow requests from your front-end
 app.set('trust proxy', 1);
@@ -25,7 +24,7 @@ app.set('trust proxy', 1);
 // Rate limiting
 const limiter = rateLimiter({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 100, // limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
 
@@ -36,9 +35,11 @@ app.use(helmet());
 app.use(xss());
 
 // CORS configuration
-app.use(cors({
-  origin: 'http://127.0.0.1:8080' // replace with your front-end's URL
-}));
+app.use(
+  cors({
+    origin: 'http://127.0.0.1:8080', // replace with your front-end's URL
+  })
+);
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -61,13 +62,11 @@ app.use('/api/v1/categories', categoryRouter);
 app.use(errorHandlerMiddleware);
 app.use(notFound);
 
-
-
 const port = process.env.PORT || 3000;
 
 app.listen(port, async () => {
   try {
-    await dbConnect(process.env.MONGO_URI);
+    await dbConnect();
     console.log(`Listening on port ${port}`);
   } catch (error) {
     console.log(error);
