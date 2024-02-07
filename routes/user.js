@@ -43,12 +43,12 @@ router
 router
   .route('/follow-user/:id')
   .post(isLogin, isSuspended, isBlocked, followUser);
-
 router.route('/unfollow-user/:id').post(isLogin, isSuspended, unfollowUser);
-router.route('/block-user/:id').post(isLogin, isSuspended, blockUser);
-router.route('/unblock-user/:id').post(isLogin, isSuspended, unblockUser);
-router.route('/suspend-user/:id').post(isLogin, isAdmin, suspendUser);
-router.route('/unsuspend-user/:id').post(isLogin, isAdmin, unSuspendUser);
+
+router.route('/block-user/:id').patch(isLogin, isSuspended, blockUser);
+router.route('/unblock-user/:id').patch(isLogin, isSuspended, unblockUser);
+router.route('/suspend-user/:id').patch(isLogin, isAdmin, suspendUser);
+router.route('/unsuspend-user/:id').patch(isLogin, isAdmin, unSuspendUser);
 router.route('/update-me').patch(isLogin, isSuspended, updateUser);
 router
   .route('/update-password')
