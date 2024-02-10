@@ -1,26 +1,25 @@
 const jwt = require('jsonwebtoken');
 
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
+const signAccessToken = (userId) => {
+  return new Promise((resolve, reject) => {
+    const payload = { userId };
+    const secret = process.env.JWT_SECRET;
+    const options = {
+      expiresIn: process.env.JWT_EXPIRE,
+    };
+
+    jwt.sign(payload, secret, options, (err, token) => {
+      if (err) {
+        console.log(err.message);
+        return reject(createError.InternalServerError());
+      }
+      resolve(token);
+    });
   });
 };
 
 const generateJWT = async (user, res) => {
-    const token = await signToken(user._id);
-
-    const cookieOption = {
-      expires: new Date(
-        Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-      ),
-      httpOnly: true,
-    };
-
-    if (process.env.NODE_ENV === 'production') {
-      cookieOption.secure = true;
-    }
-
-    res.cookie('jwt', token, cookieOption);
+    const token = await signAccessToken(user._id);
 
     user.password = undefined;
 

@@ -42,7 +42,7 @@ const login = async (req, res, next) => {
     return next(new AppError('Invalid credentials', 400));
   }
 
-  const token = generateJWT(user._id);
+  const token = await generateJWT(user._id);
 
   res.status(200).json({
     status: 'success',

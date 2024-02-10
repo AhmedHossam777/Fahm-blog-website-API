@@ -11,7 +11,7 @@ const isLogin = async (req, res, next) => {
       message: 'Access denied. No token provided',
     });
 
-  const decoded = await verifyToken(token);
+  const decoded = await verifyToken(token); // decoded is the payload of the token (user id)
   // console.log(decoded);
   
   if (!decoded) {
