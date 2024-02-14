@@ -1,3 +1,6 @@
+require('express-async-errors');
+
+
 const Category = require('../models/Category');
 const AppError = require('../utils/AppError');
 

@@ -1,12 +1,14 @@
 const jwt = require('jsonwebtoken');
 
-const verifyToken = async (token) => {
+const verifyToken = (token, secret) => {
   try {
-    const decoded = await jwt.verify(token, process.env.JWT_SECRET); // decoded = { id: 'user id' } from the token payload
-
+    const decoded = jwt.verify(token, secret);
     return decoded;
-  } catch (error) {
-    console.log(error.message);
+  } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      return 'TokenExpiredError';
+    }
+    console.error(err.message);
     return false;
   }
 };

@@ -25,6 +25,7 @@ const {
   suspendUser,
   unSuspendUser,
   updateUserPassword,
+  refreshToken,
 } = require('../controllers/user');
 
 router.route('/').get(isLogin, getAllUsers);
@@ -54,5 +55,7 @@ router
   .route('/update-password')
   .patch(isLogin, isSuspended, updateUserPassword);
 router.route('/delete-me').delete(isLogin, deleteUser);
+
+router.route('/refresh-token').post(refreshToken);
 
 module.exports = router;

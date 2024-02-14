@@ -1,9 +1,16 @@
+require('express-async-errors');
+
+
 const User = require('../models/User');
-const generateJWT = require('../utils/generateJWT');
 const AppError = require('../utils/AppError');
 const Post = require('./../models/Post');
 const Comment = require('../models/Comment');
 const Category = require('../models/Category');
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require('../utils/generateJWT');
+const verifyToken = require('../utils/verifyToken');
 
 const register = async (req, res, next) => {
   const user = req.body;
@@ -16,10 +23,15 @@ const register = async (req, res, next) => {
   }
   const newUser = await User.create(user);
 
-  const token = await generateJWT(newUser, res);
+  const [token, refreshToken] = await Promise.all([
+    generateAccessToken(newUser),
+    generateRefreshToken(newUser),
+  ]);
+
   res.status(201).json({
     status: 'success',
-    token: token,
+    token,
+    refreshToken,
     data: {
       user,
     },
@@ -42,12 +54,16 @@ const login = async (req, res, next) => {
     return next(new AppError('Invalid credentials', 400));
   }
 
-  const token = await generateJWT(user._id);
+  const [token, refreshToken] = await Promise.all([
+    generateAccessToken(user),
+    generateRefreshToken(user),
+  ]);
 
   res.status(200).json({
     status: 'success',
     message: 'Login successful',
     token,
+    refreshToken,
     user: user._id,
   });
 };
@@ -349,6 +365,35 @@ const deleteUser = async (req, res, next) => {
   });
 };
 
+const refreshToken = async (req, res, next) => {
+  const refreshToken = req.body.refreshToken;
+  if (!refreshToken) {
+    return next(createError(400, 'Refresh token is required'));
+  }
+
+  const decoded = verifyToken(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+  if (!decoded || decoded === 'TokenExpiredError') {
+    return next(createError(401, 'Invalid refresh token'));
+  }
+
+  const user = await User.findById(decoded.userId);
+  if (!user) {
+    return next(createError(404, 'User not found'));
+  }
+
+  const [newToken, newRefreshToken] = await Promise.all([
+    generateAccessToken(user),
+    generateRefreshToken(user),
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    user,
+    token: newToken,
+    refreshToken: newRefreshToken,
+  });
+};
+
 module.exports = {
   register,
   login,
@@ -365,4 +410,5 @@ module.exports = {
   unSuspendUser,
   updateUser,
   updateUserPassword,
+  refreshToken,
 };

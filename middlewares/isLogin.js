@@ -1,27 +1,27 @@
-const getTokenFromHeader = require('../utils/getTokenFromHeader');
 const verifyToken = require('../utils/verifyToken');
+const createError = require('http-errors');
+const User = require('../models/User');
+const getTokenFromHeader = require('../utils/getTokenFromHeader');
 
 const isLogin = async (req, res, next) => {
   const token = getTokenFromHeader(req);
-  // console.log(token);
-
-  if (!token)
-    return res.status(403).json({
-      status: 'fail',
-      message: 'Access denied. No token provided',
-    });
-
-  const decoded = await verifyToken(token); // decoded is the payload of the token (user id)
-  // console.log(decoded);
-  
-  if (!decoded) {
-    return res.status(403).json({
-      status: 'fail',
-      message: 'Invalid token',
-    });
+  if (!token) {
+    return next(createError(401, 'Unauthorized'));
   }
-  req.user = decoded; // req.user is the user object from the token payload (user id)
-  // console.log(req.user);
+  const decoded = verifyToken(token, process.env.ACCESS_TOKEN_SECRET);
+
+  if (decoded === 'TokenExpiredError') {
+    return next(createError(401, 'Token expired'));
+  }
+  if (!decoded) {
+    return next(createError(401, 'Unauthorized'));
+  }
+
+  const user = await User.findById(decoded.userId);
+  if (!user) {
+    return next(createError(401, 'Unauthorized'));
+  }
+  req.user = user;
   next();
 };
 
