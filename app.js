@@ -16,8 +16,11 @@ const rateLimiter = require('express-rate-limit');
 const helmet = require('helmet');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
+const cookieParser = require('cookie-parser');
 
 //? Middleware
+app.use(cookieParser(process.env.COOKIE_SECRET));
+
 // Allow requests from your front-end
 app.set('trust proxy', 1);
 

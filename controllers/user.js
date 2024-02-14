@@ -59,6 +59,15 @@ const login = async (req, res, next) => {
     generateRefreshToken(user),
   ]);
 
+  // Set the access token in a cookie
+  res.cookie('access_token', token, {
+    httpOnly: true, // Prevent access from client-side scripts
+    secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
+    sameSite: 'strict', // Prevent CSRF attacks
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days in milliseconds
+  });
+
+
   res.status(200).json({
     status: 'success',
     message: 'Login successful',
@@ -385,6 +394,15 @@ const refreshToken = async (req, res, next) => {
     generateAccessToken(user),
     generateRefreshToken(user),
   ]);
+
+  // Set the access token in a cookie
+  res.cookie('access_token', newToken, {
+    httpOnly: true, // Prevent access from client-side scripts
+    secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
+    sameSite: 'strict', // Prevent CSRF attacks
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days in milliseconds
+  });
+
 
   res.status(200).json({
     status: 'success',
