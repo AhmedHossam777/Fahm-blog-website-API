@@ -20,6 +20,7 @@
 - nodemon
 - validator
 - xss-clean
+- cookie-parser
 
 # API FEATURES
 
@@ -50,6 +51,8 @@
 - Profile photo uploaded
 - Upload images with posts
 - A user can delete his/her account
+- Using refresh token to get a new access token
+- Access token stored in a cookie
 
 # ENDPOINTS
 
@@ -60,9 +63,10 @@
   - [Run Locally](#run-locally)
   - [Environment Variables](#environment-variables)
 - [API Authentication](#api-authentication)
-  - [Register a new API client](#register-a-new-api-client)
-- [**API Reference**](#api-reference)
+- [**User API Reference**](#user-api-reference)
+  - [**Register a new API client**](#register-a-new-api-client)
   - [**User Login**](#user-login)
+  - [**Refresh Token**](#refresh-token)
   - [**get my profile**](#get-my-profile)
   - [**Get all users**](#get-all-users)
   - [**view a user profile**](#view-a-user-profile)
@@ -125,8 +129,6 @@ To run this project, you will need to add the following environment variables to
 `JWT_EXPIRE`
 `JWT_COOKIE_EXPIRES_IN`
 
-
-
 # API Authentication
 
 Some endpoints may require authentication for example. To create a create/delete/update post, you need to register your API client and obtain an access token.
@@ -137,15 +139,15 @@ The endpoints that require authentication expect a bearer token sent in the `Aut
 
 `Authorization: Bearer YOUR TOKEN`
 
-## Register a new API client
+# **User API Reference**
+
+## **Register a new API client**
 
 ```http
 POST /api/v1/users/register
 ```
 
 The request body needs to be in JSON format.
-
-# **API Reference**
 
 ## **User Login**
 
@@ -165,6 +167,24 @@ Example request body:
 {
   "email":"your email"
   "password":"your password"
+}
+```
+
+## **Refresh Token**
+
+```http
+POST /api/v1/users/refresh-token
+```
+
+| Body                | Type     | Description | Required |
+| :------------------ | :------- | :---------- | :------- |
+| `JWT refresh token` | `string` | Your token  | yes      |
+
+Example request body:
+
+```javascript
+{
+  "refreshToken":"your refresh token"
 }
 ```
 
@@ -206,9 +226,10 @@ POST /api/v1/users/follow-user/:id
 ```
 
 | Parameter        | Type     | Description                       | Required |
-| :--------------- | :------- | :-------------------------------- | :------- |PATCH
+| :--------------- | :------- | :-------------------------------- | :------- |
 | `authentication` | `string` | Your token                        | yes      |
 | `id`             | `string` | ID of the user you want to follow | yes      |
+
 
 ## **UnFollowing a user**
 
@@ -336,13 +357,13 @@ PATCH /api/v1/users/unsuspend-user/:id
   POST /api/v1/posts
 ```
 
-| Parameter        | Type     | Description        | Required |
-| :--------------- | :------- | :----------------- | :------- |
-| `authentication` | `string` | Your token         | yes      |
-| `title`          | `string` | Post title         | yes      |
-| `description`    | `string` | Post description   | yes      |
-| `category`       | `string` | Name of the category | no      |
-| `photo`          | `string` | Image of the post  | no      |
+| Parameter        | Type     | Description          | Required |
+| :--------------- | :------- | :------------------- | :------- |
+| `authentication` | `string` | Your token           | yes      |
+| `title`          | `string` | Post title           | yes      |
+| `description`    | `string` | Post description     | yes      |
+| `category`       | `string` | Name of the category | no       |
+| `photo`          | `string` | Image of the post    | no       |
 
 Example request body:
 
@@ -373,7 +394,7 @@ Example request body:
 
 | Parameter        | Type     | Description | Required |
 | :--------------- | :------- | :---------- | :------- |
-| `authentication` | `string` | Your token  | yes       |
+| `authentication` | `string` | Your token  | yes      |
 
 ## **Get Single Post**
 
@@ -420,8 +441,8 @@ Example request body:
 | `id`             | `string` | ID of the post          | yes      |
 | `title`          | `string` | title of the post       | yes      |
 | `description`    | `string` | description of the post | yes      |
-| `category`       | `string` | category of the post    | no      |
-| `photo`          | `string` | photo of the post       | no      |
+| `category`       | `string` | category of the post    | no       |
+| `photo`          | `string` | photo of the post       | no       |
 
 Example request body:
 
