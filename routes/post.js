@@ -24,7 +24,7 @@ const upload = multer({ storage });
 
 router
   .route('/')
-  .get(isSuspended, getFeed)
+  .get(getFeed)
   .post(isLogin, isSuspended, upload.single('image'), createPost); // upload.single('image')
 
 router
