@@ -1,6 +1,5 @@
 require('express-async-errors');
 
-
 const User = require('../models/User');
 const AppError = require('../utils/AppError');
 const Post = require('./../models/Post');
@@ -59,14 +58,13 @@ const login = async (req, res, next) => {
     generateRefreshToken(user),
   ]);
 
-  // Set the access token in a cookie
-  res.cookie('access_token', token, {
+  // Set the refresh token in a cookie
+  res.cookie('refreshToken', refreshToken, {
     httpOnly: true, // Prevent access from client-side scripts
     secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
     sameSite: 'strict', // Prevent CSRF attacks
-    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days in milliseconds
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days in milliseconds
   });
-
 
   res.status(200).json({
     status: 'success',
@@ -395,14 +393,13 @@ const refreshToken = async (req, res, next) => {
     generateRefreshToken(user),
   ]);
 
-  // Set the access token in a cookie
-  res.cookie('access_token', newToken, {
+  // Set the refresh token in a cookie
+  res.cookie('refreshToken', refreshToken, {
     httpOnly: true, // Prevent access from client-side scripts
     secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
     sameSite: 'strict', // Prevent CSRF attacks
-    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days in milliseconds
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days in milliseconds
   });
-
 
   res.status(200).json({
     status: 'success',
