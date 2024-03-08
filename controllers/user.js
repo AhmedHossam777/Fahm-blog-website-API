@@ -373,7 +373,7 @@ const deleteUser = async (req, res, next) => {
 };
 
 const refreshToken = async (req, res, next) => {
-  const refreshToken = req.body.refreshToken;
+  const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) {
     return next(createError(400, 'Refresh token is required'));
   }
