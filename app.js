@@ -56,6 +56,10 @@ app.use((req, res, next) => {
 });
 
 //? Routes
+app.get('/', (req, res) => {
+  res.send('Welcome to the blog API');
+});
+
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/comments', commentRouter);

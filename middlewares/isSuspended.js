@@ -4,7 +4,7 @@ const AppError = require('../utils/AppError');
 const isSuspended = async (req, res, next) => {
   const user = await User.findById(req.user.id);
   if (!user) {
-    return next(new AppError('user does not exist!', 400));
+    return next(new AppError('user does not exist!', 404));
   }
 
   if (user.suspend) {

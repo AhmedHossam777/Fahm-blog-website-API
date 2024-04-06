@@ -10,8 +10,6 @@ const multer = require('multer');
 const upload = multer({ storage });
 
 const {
-  register,
-  login,
   userProfile,
   deleteUser,
   updateUser,
@@ -24,9 +22,9 @@ const {
   unblockUser,
   suspendUser,
   unSuspendUser,
-  updateUserPassword,
-  refreshToken,
 } = require('../controllers/user');
+
+const { register, login, refreshToken,  updateUserPassword, } = require('../controllers/auth');
 
 router.route('/').get(isLogin, getAllUsers);
 router.route('/register').post(register);
