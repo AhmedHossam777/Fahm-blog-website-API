@@ -24,11 +24,12 @@ const {
   unSuspendUser,
 } = require('../controllers/user');
 
-const { register, login, refreshToken,  updateUserPassword, } = require('../controllers/auth');
+const { register, login, refreshToken,  updateUserPassword,logout } = require('../controllers/auth');
 
 // Auth
 router.route('/register').post(register);
 router.route('/login').post(login);
+router.route('/logout').post(logout);
 router.route('/refresh-token').post(refreshToken);
 router
   .route('/update-password')

@@ -130,4 +130,12 @@ const refreshToken = async (req, res, next) => {
 	});
 };
 
-module.exports = { login, register, refreshToken, updateUserPassword}
+const logout = async (req, res, next) => {
+	res.clearCookie('refreshToken');
+	res.status(200).json({
+		status: 'success',
+		message: 'Logout successful',
+	});
+}
+
+module.exports = { login, register, refreshToken, updateUserPassword, logout}
