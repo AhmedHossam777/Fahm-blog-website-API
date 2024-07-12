@@ -1,6 +1,5 @@
 require('express-async-errors');
 
-
 const Post = require('../models/Post');
 const User = require('../models/User');
 const Category = require('../models/Category');
@@ -42,13 +41,10 @@ const getPostsOfFollowedUsers = async (req, res, next) => {
 };
 
 const getPost = async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-  const postId = req.params.id;
-  if (!postId) {
-    return next(new AppError('please provide the id in the url', 400));
-  }
-
-  const post = await Post.findById(postId);
+  const [user, post] = await Promise.all([
+    User.findById(req.user.id),
+    Post.findById(req.params.id),
+  ]);
 
   if (!post) {
     return next(new AppError('there is no post with that id', 400));
@@ -103,8 +99,10 @@ const createPost = async (req, res, next) => {
 };
 
 const likePost = async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-  const post = await Post.findById(req.params.id);
+  const [user, post] = await Promise.all([
+    User.findById(req.user.id),
+    Post.findById(req.params.id),
+  ]);
 
   if (!post) {
     return next('there is no post with that id', 404);
@@ -125,8 +123,10 @@ const likePost = async (req, res, next) => {
 };
 
 const disLikePost = async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-  const post = await Post.findById(req.params.id);
+  const [user, post] = await Promise.all([
+    User.findById(req.user.id),
+    Post.findById(req.params.id),
+  ]);
 
   if (!post) {
     return next('there is no post with that id', 404);
@@ -147,8 +147,14 @@ const disLikePost = async (req, res, next) => {
 };
 
 const deletePost = async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-  const post = await Post.findById(req.params.id);
+  const [user, post] = await Promise.all([
+    User.findById(req.user.id),
+    Post.findById(req.params.id),
+  ]);
+
+  if (!user) {
+    return next('there is no user with that id', 404);
+  }
 
   if (!post) {
     return next('there is no post with that id', 404);
@@ -169,8 +175,10 @@ const deletePost = async (req, res, next) => {
 };
 
 const updatePost = async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-  const post = await Post.findById(req.params.id);
+  const [user, post] = await Promise.all([
+    User.findById(req.user.id),
+    Post.findById(req.params.id),
+  ]);
 
   if (!post) {
     return next('there is no post with that id', 404);

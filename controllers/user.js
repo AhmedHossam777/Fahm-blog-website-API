@@ -278,10 +278,13 @@ const getAllUsers = async (req, res, next) => {
 };
 
 const deleteUser = async (req, res, next) => {
-  await User.findOneAndDelete({ _id: req.user.id });
-  await Post.deleteMany({ user: req.user.id });
-  await Comment.deleteMany({ user: req.user.id });
-  await Category.deleteMany({ user: req.user.id });
+
+  await Promise.all([
+    User.findOneAndDelete({ _id: req.user.id }),
+    Post.deleteMany({ user: req.user.id }),
+    Comment.deleteMany({ user: req.user.id }),
+    Category.deleteMany({ user: req.user.id })
+  ]);
 
   res.status(204).json({
     status: 'success',
